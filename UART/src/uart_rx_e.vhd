@@ -8,7 +8,7 @@ library ieee;
 use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.all;
 
-entity rv_UART_RX is 
+entity rv_UART_RX_e is 
 port 	(
 	clk_i	: in  std_logic;
 	rst_i	: in  std_logic;
@@ -18,4 +18,4 @@ port 	(
 	cry_o	: out std_logic; -- carry out bit for baudrate generation
 	ascii_o	: out std_logic_vector(7 downto 0);
 	rx_o	: out std_logic);
-end rv_UART_RX;
+end rv_UART_RX_e;
