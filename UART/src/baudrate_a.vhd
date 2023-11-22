@@ -17,7 +17,7 @@ begin
         if (rst_i = '0') then
             cnt_is <= 0;
         elsif (rising_edge(clk_i)) then
-            if (cnt_is >= cnt_max_s or br_start_i = '1') then
+            if (cnt_is <= cnt_max_s or br_start_i = '1') then
                 cnt_is <= 0;
             else
                 cnt_is <= cnt_is + 1;
