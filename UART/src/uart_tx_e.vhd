@@ -8,7 +8,7 @@ library ieee;
 use ieee.std_logic_1164.ALL;
 use ieee.numeric_std.all;
 
-entity rv_UART_TX is 
+entity rv_UART_TX_e is 
 port 	(
 	clk_i		: in  std_logic;
 	rst_i		: in  std_logic;
@@ -16,4 +16,4 @@ port 	(
 	ascii_i		: in  std_logic_vector(7 downto 0); -- ascii input
 	en_i		: in  std_logic; -- enable bit
 	tx_o		: out std_logic);
-end rv_UART_TX;
+end rv_UART_TX_e;
