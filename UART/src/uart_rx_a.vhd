@@ -4,9 +4,9 @@
 -- Wintersemester 2023/24
 -- -------------------------------------------------------
 
-architecture of rv_UART_RX_a of rv_UART_RX_e is 
+architecture rv_UART_RX_a of rv_UART_RX_e is 
 
-	type state_t of (idle_st, start_st, wait_st,
+	type state_t is (idle_st, start_st, wait_st,
 					 stop_st, rst_st, parity_st, 
 					 br_st, bit0_st, bit1_st, 
 					 bit2_st, bit3_st, bit4_st,
@@ -28,14 +28,14 @@ architecture of rv_UART_RX_a of rv_UART_RX_e is
 		begin
 			if (rst_i = '0') then
 				rx_delay_s	<= (others => '0')
-			else if(clk_i'event and clk_i = '1') then
+			elsif(clk_i'event and clk_i = '1') then
 				rx_delay_s(1)	<= rx_delay_s(0);
 				rx_delay_s(0)	<= rx_i;
 			end if;
 		end process;
 		rx_falledge_s	<= (not rx_delay_s(0) and rx_delay_s(1));
 	
-		rx_process: process(c_state_s, rx_falledge_s, br_i, br2_i rx_i)
+		rx_process: process(c_state_s, rx_falledge_s, br_i, br2_i, rx_i)
 		begin
 			nxt_state_s <= c_state_s;
 			case c_state_s is
@@ -104,7 +104,7 @@ architecture of rv_UART_RX_a of rv_UART_RX_e is
 		rx_riseedge_s <= (not rx_delay_s(1) and rx_delay_s(0));
 		rx_falledge_s <= (not rx_delay_s(0) and rx_delay_s(1));
 
-		rx_rdy_s	<=	rx_flledge_s;
+		rx_rdy_s	<=	rx_falledge_s;
 		cry_o		<=	'1' when (c_state_s = br_st) else '0';
 
 		process(clk_i, rst_i)
