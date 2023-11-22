@@ -1,29 +1,13 @@
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_1164.all;
+use IEEE.NUMERIC_STD.all;
 
 entity tb_rv_baudrate_e is
 end tb_rv_baudrate_e;
 
 architecture tb_rv_baudrate_a of tb_rv_baudrate_e is
-    signal clk : std_logic := '0';
-    signal rst : std_logic := '1'; -- Active low reset
-    signal br_start : std_logic := '0'; -- Start the counter
-    signal baud_rate : std_logic := '0'; -- Baud rate selection (0 for 9600, 1 for 19200)
-    signal br_2_o, brx_o, test_o : std_logic;
 
-    -- Clock process
-    process
-    begin
-        wait for 5 ns; -- Initial wait
-        while now < 1000 ns loop
-            clk <= not clk;
-            wait for 5 ns; -- Clock period
-        end loop;
-        wait;
-    end process;
-
-    -- DUT instantiation
-    COMPONENT rv_baudrate_e
+    component rv_baudrate_e
         port (
             clk_i        : in  std_logic;
             rst_i        : in  std_logic;
@@ -33,45 +17,76 @@ architecture tb_rv_baudrate_a of tb_rv_baudrate_e is
             brx_o        : out std_logic;
             test_o       : out std_logic
         );
-    end COMPONENT;
+    end component;
 
-    -- Stimulus process
-    process
+    constant clk2_t :   time := 10ns;
+    signal   clk_s  :   std_logic := '0';
+    signal   rst_s  :   std_logic;
+    signal   start_s:   std_logic;
+    signal   br2_s  :   std_logic;
+    signal   brx_s  :   std_logic;
+    signal   test_s :   std_logic;
+
     begin
-        wait for 10 ns; -- Initial wait
+        DUT : tb_rv_baudrate_e port map (clk_s, rst_s, start_s, br2_s, brx_s, test_s);
 
-        -- Reset sequence
-        rst <= '0';
-        wait for 20 ns;
-        rst <= '1';
+        process(clk_s)
+        begin
+            clk_s <= not clk_s after clk2_t;
+        end process;
 
-        -- Test scenario 1: 9600 baud rate
-        baud_rate <= '0';
-        br_start <= '1';
-        wait for 50 ns;
-        br_start <= '0';
+        process
+        begin
+            rst_s   <= '0';
+            start_s <= '0';
+            wait for 4 * clk2_t;
+            assert(br2_s  = '0') report "0.) BR RX wrong" severity warning;
+            assert(brx_s  = '1') report "0.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "0.) Test wrong " severity warning;
 
-        -- Test scenario 2: 19200 baud rate
-        baud_rate <= '1';
-        br_start <= '1';
-        wait for 50 ns;
-        br_start <= '0';
+            rst_s   <= '1';
+            wait for 4 * clk2_t;
+            assert(br2_s  = '0') report "1.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "1.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "1.) Test wrong " severity warning;
 
-        -- Add more test scenarios as needed
+            start_s <= '1';
+            wait for 2 * clk2_t;
+            start_s <= '0';
+            wait for 2 * clk2_t;
+            assert(br2_s  = '0') report "2.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "2.) BR TX wrong" severity warning;
+            assert(test_s = '1') report "2.) Test wrong " severity warning;
 
-        wait;
-    end process;
+            wait for 2602 * 2 * clk2_t;
+            assert(br2_s  = '0') report "3.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "3.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "3.) Test wrong " severity warning;
+            wait for 2 * clk2_t;
+            assert(br2_s  = '1') report "4.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "4.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "4.) Test wrong " severity warning;
+            wait for 2 * clk2_t;
+            assert(br2_s  = '0') report "5.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "5.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "5.) Test wrong " severity warning;  
+            
+            wait for 2602 * 2 * clk2_t;
+            assert(br2_s  = '0') report "6.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "6.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "6.) Test wrong " severity warning;
+            wait for 2 * clk2_t;
+            assert(br2_s  = '0') report "7.) BR RX wrong" severity warning;
+            assert(brx_s  = '1') report "7.) BR TX wrong" severity warning;
+            assert(test_s = '0') report "7.) Test wrong " severity warning;
+            wait for 2 * clk2_t;
+            assert(br2_s  = '0') report "8.) BR RX wrong" severity warning;
+            assert(brx_s  = '0') report "8.) BR TX wrong" severity warning;
+            assert(test_s = '1') report "8.) Test wrong " severity warning;
 
-    -- Instantiate the DUT
-    UUT: rv_baudrate_e
-        port map (
-            clk_i        => clk,
-            rst_i        => rst,
-            br_start_i   => br_start,
-            baud_rate_i  => baud_rate,
-            br_2_o       => br_2_o,
-            brx_o        => brx_o,
-            test_o       => test_o
-        );
+            wait for 2 * 104 us;
+            wait for 120 * 2 * clk2_t;
+            assert false report "End of Simulation!" severity failure;
+        end process;
 
 end tb_rv_baudrate_a;
