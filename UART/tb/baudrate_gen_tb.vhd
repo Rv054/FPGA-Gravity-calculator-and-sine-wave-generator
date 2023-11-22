@@ -24,13 +24,6 @@ architecture tb_rv_baudrate_a of tb_rv_baudrate_e is
 
     -- DUT instantiation
     COMPONENT rv_baudrate_e
-        generic (
-            br_max_cnt_c : integer := 16383;
-            b96_g        : integer := 13021;
-            b96_2_g      : integer := 6511 ;
-            b192_g       : integer := 6510 ;
-            b192_2_g     : integer := 3255
-        );
         port (
             clk_i        : in  std_logic;
             rst_i        : in  std_logic;
@@ -71,13 +64,6 @@ architecture tb_rv_baudrate_a of tb_rv_baudrate_e is
 
     -- Instantiate the DUT
     UUT: rv_baudrate_e
-        generic map (
-            br_max_cnt_c : 16383,
-            b96_g        : 13021,
-            b96_2_g      : 6511,
-            b192_g       : 6510,
-            b192_2_g     : 3255
-        )
         port map (
             clk_i        => clk,
             rst_i        => rst,
