@@ -1,1 +1,1 @@
-# VHDL--Circuit-Design
+# FPGA: Gravity calculator and sine wave generator
